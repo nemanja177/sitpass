@@ -38,45 +38,45 @@ public class ElasticsearchQueryServiceImpl implements ElasticsearchQueryService 
             ));
         }
         
-        // ------------------
+        // ------------------ ISPRAVAN ----------
         
-        if (minReview != null || maxReview != null) {
-            mustQueries.add(Query.of(q -> q
-                .range(r -> r
-                    .number(n -> { 
-                        n.field("brojReviewa");
-
-                        if (minReview != null) {
-                            n.gte(minReview.doubleValue()); 
-                        }
-                        if (maxReview != null) {
-                            n.lte(maxReview.doubleValue());
-                        }
-                        return n;
-                    })
-                )
-            ));
-        }
-
-        // ----------------------------------------------------------------------
-
-        if (minOcena != null || maxOcena != null) {
-            mustQueries.add(Query.of(q -> q
-                .range(r -> r
-                    .number(n -> { 
-                        n.field("prosecnaOcena");
-
-                        if (minOcena != null) {
-                            n.gte(minOcena); 
-                        }
-                        if (maxOcena != null) {
-                            n.lte(maxOcena);
-                        }
-                        return n;
-                    })
-                )
-            ));
-        }
+//        if (minReview != null || maxReview != null) {
+//            mustQueries.add(Query.of(q -> q
+//                .range(r -> r
+//                    .number(n -> { 
+//                        n.field("brojReviewa");
+//
+//                        if (minReview != null) {
+//                            n.gte(minReview.doubleValue()); 
+//                        }
+//                        if (maxReview != null) {
+//                            n.lte(maxReview.doubleValue());
+//                        }
+//                        return n;
+//                    })
+//                )
+//            ));
+//        }
+//
+//        // ----------------------------------------------------------------------
+//
+//        if (minOcena != null || maxOcena != null) {
+//            mustQueries.add(Query.of(q -> q
+//                .range(r -> r
+//                    .number(n -> { 
+//                        n.field("prosecnaOcena");
+//
+//                        if (minOcena != null) {
+//                            n.gte(minOcena); 
+//                        }
+//                        if (maxOcena != null) {
+//                            n.lte(maxOcena);
+//                        }
+//                        return n;
+//                    })
+//                )
+//            ));
+//        }
 
         SearchRequest request = SearchRequest.of(s -> s
                 .index(INDEX_NAME)

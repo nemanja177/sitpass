@@ -48,4 +48,110 @@ public class FacilityDocument {
 
     @Field(type = FieldType.Double)
     private double avgSpaceGrade;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getPdfDescriptionText() {
+		return pdfDescriptionText;
+	}
+
+	public void setPdfDescriptionText(String pdfDescriptionText) {
+		this.pdfDescriptionText = pdfDescriptionText;
+	}
+
+	public List<String> getDisciplines() {
+		return disciplines;
+	}
+
+	public void setDisciplines(List<String> disciplines) {
+		this.disciplines = disciplines;
+	}
+
+	public List<String> getImageFilenames() {
+		return imageFilenames;
+	}
+
+	public void setImageFilenames(List<String> imageFilenames) {
+		this.imageFilenames = imageFilenames;
+	}
+
+	public int getReviewCount() {
+		return reviewCount;
+	}
+
+	public void setReviewCount(int reviewCount) {
+		this.reviewCount = reviewCount;
+	}
+
+	public double getAvgEquipmentGrade() {
+		return avgEquipmentGrade;
+	}
+
+	public void setAvgEquipmentGrade(double avgEquipmentGrade) {
+		this.avgEquipmentGrade = avgEquipmentGrade;
+	}
+
+	public double getAvgStaffGrade() {
+		return avgStaffGrade;
+	}
+
+	public void setAvgStaffGrade(double avgStaffGrade) {
+		this.avgStaffGrade = avgStaffGrade;
+	}
+
+	public double getAvgHygieneGrade() {
+		return avgHygieneGrade;
+	}
+
+	public void setAvgHygieneGrade(double avgHygieneGrade) {
+		this.avgHygieneGrade = avgHygieneGrade;
+	}
+
+	public double getAvgSpaceGrade() {
+		return avgSpaceGrade;
+	}
+
+	public void setAvgSpaceGrade(double avgSpaceGrade) {
+		this.avgSpaceGrade = avgSpaceGrade;
+	}
+    
+    
 }

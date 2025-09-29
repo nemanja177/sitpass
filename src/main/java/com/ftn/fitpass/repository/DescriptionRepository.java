@@ -7,4 +7,6 @@ import com.ftn.fitpass.model.Description;
 @Repository
 public interface DescriptionRepository extends JpaRepository<Description, Long> {
 	
+	Description findDescriptionById(Long id);
+	
 }

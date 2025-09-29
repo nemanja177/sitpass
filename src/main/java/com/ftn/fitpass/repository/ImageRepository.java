@@ -8,4 +8,6 @@ import com.ftn.fitpass.model.Image;
 @Repository
 public interface ImageRepository extends JpaRepository<Image, Long> {
 	
+	Image findImageById(Long id);
+	
 }

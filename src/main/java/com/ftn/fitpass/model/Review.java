@@ -27,4 +27,79 @@ public class Review {
 
     @ManyToOne
     private User user;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public int getEquipmentGrade() {
+		return equipmentGrade;
+	}
+
+	public void setEquipmentGrade(int equipmentGrade) {
+		this.equipmentGrade = equipmentGrade;
+	}
+
+	public int getStaffGrade() {
+		return staffGrade;
+	}
+
+	public void setStaffGrade(int staffGrade) {
+		this.staffGrade = staffGrade;
+	}
+
+	public int getHygieneGrade() {
+		return hygieneGrade;
+	}
+
+	public void setHygieneGrade(int hygieneGrade) {
+		this.hygieneGrade = hygieneGrade;
+	}
+
+	public int getSpaceGrade() {
+		return spaceGrade;
+	}
+
+	public void setSpaceGrade(int spaceGrade) {
+		this.spaceGrade = spaceGrade;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public Facility getFacility() {
+		return facility;
+	}
+
+	public void setFacility(Facility facility) {
+		this.facility = facility;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+    
+    
+    
 }
