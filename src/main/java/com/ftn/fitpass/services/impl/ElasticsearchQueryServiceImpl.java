@@ -14,7 +14,6 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
-import co.elastic.clients.json.JsonData;
 
 @Service
 public class ElasticsearchQueryServiceImpl implements ElasticsearchQueryService {
@@ -38,24 +37,43 @@ public class ElasticsearchQueryServiceImpl implements ElasticsearchQueryService 
                     )
             ));
         }
-
-        // range za brojReview
+        
+        // ------------------
+        
         if (minReview != null || maxReview != null) {
             mustQueries.add(Query.of(q -> q
                 .range(r -> r
-                    .field("brojReviewa")
-                    .gte(minReview != null ? JsonData.of(minReview) : null)
-                    .lte(maxReview != null ? JsonData.of(maxReview) : null)
+                    .number(n -> { 
+                        n.field("brojReviewa");
+
+                        if (minReview != null) {
+                            n.gte(minReview.doubleValue()); 
+                        }
+                        if (maxReview != null) {
+                            n.lte(maxReview.doubleValue());
+                        }
+                        return n;
+                    })
                 )
             ));
         }
 
+        // ----------------------------------------------------------------------
+
         if (minOcena != null || maxOcena != null) {
             mustQueries.add(Query.of(q -> q
                 .range(r -> r
-                    .field("prosecnaOcena")
-                    .gte(minOcena != null ? JsonData.of(minOcena) : null)
-                    .lte(maxOcena != null ? JsonData.of(maxOcena) : null)
+                    .number(n -> { 
+                        n.field("prosecnaOcena");
+
+                        if (minOcena != null) {
+                            n.gte(minOcena); 
+                        }
+                        if (maxOcena != null) {
+                            n.lte(maxOcena);
+                        }
+                        return n;
+                    })
                 )
             ));
         }
