@@ -20,8 +20,11 @@ import com.ftn.fitpass.services.impl.UserServiceImpl;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final TokenAuthenticationFilter jwtFilter;
-    private final UserServiceImpl userDetailsService;
+	@Autowired
+    private TokenAuthenticationFilter jwtFilter;
+	
+	@Autowired
+    private UserServiceImpl userDetailsService;
 
     public SecurityConfig(TokenAuthenticationFilter jwtFilter, UserServiceImpl userDetailsService) {
         this.jwtFilter = jwtFilter;

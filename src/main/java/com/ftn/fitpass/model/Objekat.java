@@ -10,7 +10,7 @@ import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "objekti")
-public class SportskiObjekat {
+public class Objekat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,11 +38,11 @@ public class SportskiObjekat {
     @Transient
     private String pdfText;
     
-	public SportskiObjekat() {
+	public Objekat() {
 		super();
 	}
 
-	public SportskiObjekat(Long id, String naziv, String opis, Integer brojReviewa, Double prosecnaOcena, String kategorija,
+	public Objekat(Long id, String naziv, String opis, Integer brojReviewa, Double prosecnaOcena, String kategorija,
 			String pdfPath, String slikaPath, String pdfText) {
 		super();
 		this.id = id;
