@@ -4,8 +4,11 @@ import java.util.List;
 
 public class FacilitySearchRequest {
     private String name;        
+    private String nameSearchType;
     private String description; 
+    private String descriptionSearchType;
     private String pdfText;     
+    private String pdfTextSearchType;
     private List<String> cities;      
     private List<String> disciplines; 
     private Integer minReviewCount;   
@@ -15,6 +18,25 @@ public class FacilitySearchRequest {
 
     private String sortField;         
     private String sortOrder;
+    
+	public String getNameSearchType() {
+		return nameSearchType;
+	}
+	public void setNameSearchType(String nameSearchType) {
+		this.nameSearchType = nameSearchType;
+	}
+	public String getDescriptionSearchType() {
+		return descriptionSearchType;
+	}
+	public void setDescriptionSearchType(String descriptionSearchType) {
+		this.descriptionSearchType = descriptionSearchType;
+	}
+	public String getPdfTextSearchType() {
+		return pdfTextSearchType;
+	}
+	public void setPdfTextSearchType(String pdfTextSearchType) {
+		this.pdfTextSearchType = pdfTextSearchType;
+	}
 	public String getName() {
 		return name;
 	}

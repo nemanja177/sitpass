@@ -1,6 +1,7 @@
 package com.ftn.fitpass.services.impl;
 
 import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.json.JsonData;
@@ -32,6 +33,59 @@ public class FacilitySearchServiceImpl implements FacilitySearchService {
     @Override
     public SearchPage<FacilityDocument> searchFacilities(FacilitySearchRequest request, Pageable pageable) {
         Query query = BoolQuery.of(b -> {
+        	
+        	if (request.getName() != null && !request.getName().isEmpty()) {
+                switch (request.getNameSearchType()) {
+                    case "phrase":
+                        b.must(m -> m.matchPhrase(mp -> mp.field("name").query(request.getName())));
+                        break;
+                    case "prefix":
+                        b.must(m -> m.prefix(p -> p.field("name").value(request.getName())));
+                        break;
+                    case "fuzzy":
+                        b.must(m -> m.match(mb -> mb.field("name").fuzziness("AUTO").query(request.getName())));
+                        break;
+                    default:
+                        b.must(m -> m.match(mb -> mb.field("name").query(request.getName())));
+                        break;
+                }
+            }
+
+            if (request.getDescription() != null && !request.getDescription().isEmpty()) {
+                switch (request.getDescriptionSearchType()) {
+                    case "phrase":
+                        b.must(m -> m.matchPhrase(mp -> mp.field("description").query(request.getDescription())));
+                        break;
+                    case "prefix":
+                        b.must(m -> m.prefix(p -> p.field("description").value(request.getDescription())));
+                        break;
+                    case "fuzzy":
+                        b.must(m -> m.match(mb -> mb.field("description").fuzziness("AUTO").query(request.getDescription())));
+                        break;
+                    default:
+                        b.must(m -> m.match(mb -> mb.field("description").query(request.getDescription())));
+                        break;
+                }
+            }
+
+            if (request.getPdfText() != null && !request.getPdfText().isEmpty()) {
+                switch (request.getPdfTextSearchType()) {
+                    case "phrase":
+                        b.must(m -> m.matchPhrase(mp -> mp.field("pdfDescriptionText").query(request.getPdfText())));
+                        break;
+                    case "prefix":
+                        b.must(m -> m.prefix(p -> p.field("pdfDescriptionText").value(request.getPdfText())));
+                        break;
+                    case "fuzzy":
+                        b.must(m -> m.match(mb -> mb.field("pdfDescriptionText").fuzziness("AUTO").query(request.getPdfText())));
+                        break;
+                    default:
+                        b.must(m -> m.match(mb -> mb.field("pdfDescriptionText").query(request.getPdfText())));
+                        break;
+                }
+            }
+        	
+        	
             if (request.getName() != null && !request.getName().isEmpty()) {
                 b.must(m -> m.match(t -> t.field("name").query(request.getName())));
             }
@@ -80,14 +134,23 @@ public class FacilitySearchServiceImpl implements FacilitySearchService {
 
             return b;
         })._toQuery();
-
-        NativeQuery nativeQuery = new NativeQueryBuilder()
+        
+        NativeQueryBuilder builder = new NativeQueryBuilder()
                 .withQuery(query)
-                .withPageable(pageable)
-                .build();
+                .withPageable(pageable);
+
+        if (request.getSortField() != null && !request.getSortField().isEmpty()) {
+            SortOrder order = "desc".equalsIgnoreCase(request.getSortOrder()) ? SortOrder.Desc : SortOrder.Asc;
+            builder.withSort(s -> s
+                .field(f -> f
+                    .field(request.getSortField())
+                    .order(order)
+                ));
+        }
+
+        NativeQuery nativeQuery = builder.build();
 
         SearchHits<FacilityDocument> searchHits = elasticsearchOperations.search(nativeQuery, FacilityDocument.class);
-
         return SearchHitSupport.searchPageFor(searchHits, pageable);
     }
 }
