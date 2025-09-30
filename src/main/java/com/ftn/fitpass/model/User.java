@@ -25,8 +25,8 @@ public class User {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "surname", nullable = false)
-    private String surname;
+    @Column(name = "username", nullable = false)
+    private String username;
 
     @Column(name = "created_at", nullable = false)
     private LocalDate createdAt;
@@ -59,7 +59,7 @@ public class User {
 		this.email = email;
 		this.password = password;
 		this.name = name;
-		this.surname = surname;
+		this.username = surname;
 		this.createdAt = createdAt;
 		this.phoneNumber = phoneNumber;
 		this.birthday = birthday;
@@ -93,12 +93,12 @@ public class User {
 		this.name = name;
 	}
 
-	public String getSurname() {
-		return surname;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setSurname(String surname) {
-		this.surname = surname;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public LocalDate getCreatedAt() {
@@ -159,7 +159,7 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [email=" + email + ", password=" + password + ", name=" + name + ", surname=" + surname
+		return "User [email=" + email + ", password=" + password + ", name=" + name + ", username=" + username
 				+ ", createdAt=" + createdAt + ", phoneNumber=" + phoneNumber + ", birthday=" + birthday + ", address="
 				+ address + ", city=" + city + ", zipCode=" + zipCode + ", role=" + role + "]";
 	}

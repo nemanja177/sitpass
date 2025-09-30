@@ -18,6 +18,7 @@ import com.ftn.fitpass.services.FacilitySearchService;
 
 @RestController
 @RequestMapping("/api/facilities")
+@CrossOrigin(origins = "http://localhost:3000")
 public class FacilitySearchController {
 
 	@Autowired
