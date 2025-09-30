@@ -104,5 +104,7 @@ public class Facility {
 	public void setPdfDescription(Description pdfDescription) {
 		this.pdfDescription = pdfDescription;
 	}
+
+
     
 }

@@ -2,6 +2,7 @@ package com.ftn.fitpass.services.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ftn.fitpass.DTO.FacilityDocument;
@@ -18,20 +19,28 @@ import jakarta.transaction.Transactional;
 @Service
 public class FacilityElasticServiceImpl implements FacilityElasticService {
 
-	private final FacilityRepository facilityRepository;
-    private final ReviewRepository reviewRepository;
-    private final FacilityDocumentMapperService facilityDocumentMapperService;
-    private final FacilityDocumentRepository facilityDocumentRepository;
+	@Autowired
+	private FacilityRepository facilityRepository;
+	
+	@Autowired
+    private ReviewRepository reviewRepository;
+	
+	@Autowired
+    private FacilityDocumentMapperService facilityDocumentMapperService;
+	
+	@Autowired
+    private FacilityDocumentRepository facilityDocumentRepository;
+	
 
-    public FacilityElasticServiceImpl(FacilityRepository facilityRepository,
-                                 ReviewRepository reviewRepository,
-                                 FacilityDocumentMapperService facilityDocumentMapperService,
-                                 FacilityDocumentRepository facilityDocumentRepository) {
-        this.facilityRepository = facilityRepository;
-        this.reviewRepository = reviewRepository;
-        this.facilityDocumentMapperService = facilityDocumentMapperService;
-        this.facilityDocumentRepository = facilityDocumentRepository;
-    }
+//    public FacilityElasticServiceImpl(FacilityRepository facilityRepository,
+//                                 ReviewRepository reviewRepository,
+//                                 FacilityDocumentMapperService facilityDocumentMapperService,
+//                                 FacilityDocumentRepository facilityDocumentRepository) {
+//        this.facilityRepository = facilityRepository;
+//        this.reviewRepository = reviewRepository;
+//        this.facilityDocumentMapperService = facilityDocumentMapperService;
+//        this.facilityDocumentRepository = facilityDocumentRepository;
+//    }
 
     @Transactional
     public FacilityDocument indexFacility(Long facilityId) {

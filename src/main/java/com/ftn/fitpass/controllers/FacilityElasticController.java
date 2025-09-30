@@ -1,5 +1,6 @@
 package com.ftn.fitpass.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,14 +19,18 @@ import com.ftn.fitpass.services.FacilityService;
 @RequestMapping("/api/facilities")
 public class FacilityElasticController {
 
-    private final FacilityService facilityService;
-    private final FacilityElasticService facilityElasticService;
+	
+	@Autowired
+    private FacilityService facilityService;
+	
+	@Autowired
+    private FacilityElasticService facilityElasticService;
 
-    public FacilityElasticController(FacilityService facilityService,
-                                    FacilityElasticService facilityElasticService) {
-        this.facilityService = facilityService;
-        this.facilityElasticService = facilityElasticService;
-    }
+//    public FacilityElasticController(FacilityService facilityService,
+//                                    FacilityElasticService facilityElasticService) {
+//        this.facilityService = facilityService;
+//        this.facilityElasticService = facilityElasticService;
+//    }
 
     @PostMapping
     public ResponseEntity<Facility> createFacility(@RequestBody Facility facility) {

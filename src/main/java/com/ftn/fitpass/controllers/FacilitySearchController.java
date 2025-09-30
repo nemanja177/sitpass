@@ -5,6 +5,7 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.SearchPage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,7 +20,8 @@ import com.ftn.fitpass.services.FacilitySearchService;
 @RequestMapping("/api/facilities")
 public class FacilitySearchController {
 
-    private final FacilitySearchService facilitySearchService;
+	@Autowired
+    private FacilitySearchService facilitySearchService;
 
     public FacilitySearchController(FacilitySearchService facilitySearchService) {
         this.facilitySearchService = facilitySearchService;
