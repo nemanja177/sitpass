@@ -33,6 +33,12 @@ public class FacilityElasticController {
 //        this.facilityService = facilityService;
 //        this.facilityElasticService = facilityElasticService;
 //    }
+	
+	@PostMapping("/indexAll")
+    public ResponseEntity<Void> indexAllFacilities() {
+        facilityElasticService.indexAllFacilities();
+        return ResponseEntity.ok().build();
+    }
 
     @PostMapping
     public ResponseEntity<Facility> createFacility(@RequestBody Facility facility) {

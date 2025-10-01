@@ -1,6 +1,7 @@
 package com.ftn.fitpass.services.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,33 @@ public class FacilityElasticServiceImpl implements FacilityElasticService {
         FacilityDocument document = facilityDocumentMapperService.toFacilityDocument(facility, reviewList);
 
         return facilityDocumentRepository.save(document);
+    }
+    
+//    @Override
+//    public void indexAllFacilities() {
+//    	List<Facility> facilities = facilityRepository.findAll();
+//        List<FacilityDocument> docs = facilities.stream().map(facility -> {
+//        	System.out.println("Indexing facility id: " + facility.getId());
+//            List<Review> reviews = reviewRepository.findByFacilityId(facility.getId());
+//            return facilityDocumentMapperService.toFacilityDocument(facility, reviews);
+//        }).collect(Collectors.toList());
+//        facilityDocumentRepository.saveAll(docs);
+//    }
+    
+    @Override
+    public void indexAllFacilities() {
+        List<Facility> facilities = facilityRepository.findAll();
+        for (Facility facility : facilities) {
+            System.out.println("Indexing facility id: " + facility.getId());
+            List<Review> reviews = reviewRepository.findByFacilityId(facility.getId());
+            FacilityDocument doc = facilityDocumentMapperService.toFacilityDocument(facility, reviews);
+            try {
+                facilityDocumentRepository.save(doc);
+                System.out.println("Indexed facility id: " + facility.getId());
+            } catch (Exception e) {
+                System.err.println("Error indexing facility id " + facility.getId() + ": " + e.getMessage());
+            }
+        }
     }
 
     @Transactional

@@ -1,0 +1,236 @@
+-- Tabela za korisnike
+CREATE TABLE users (
+    email VARCHAR(255) PRIMARY KEY,
+    password VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    username VARCHAR(255) NOT NULL,
+    created_at DATE NOT NULL,
+    phone_number VARCHAR(20),
+    birthday DATE,
+    address VARCHAR(255),
+    city VARCHAR(255),
+    zip_code VARCHAR(10),
+    role ENUM('USER', 'MANAGER', 'ADMIN') NOT NULL
+);
+
+-- Tabela za slike
+CREATE TABLE image (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    server_filename VARCHAR(500) NOT NULL
+);
+
+-- Tabela za PDF opise
+CREATE TABLE description (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    server_filename VARCHAR(500) NOT NULL
+);
+
+-- Glavna tabela za objekte (Facility)
+CREATE TABLE facility (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    city VARCHAR(255),
+    address VARCHAR(255),
+    description TEXT,
+    active BOOLEAN DEFAULT true,
+    pdf_description_id BIGINT,
+    FOREIGN KEY (pdf_description_id) REFERENCES description(id)
+);
+
+-- Tabela za discipline (ElementCollection)
+CREATE TABLE facility_disciplines (
+    facility_id BIGINT NOT NULL,
+    disciplines VARCHAR(255),
+    FOREIGN KEY (facility_id) REFERENCES facility(id)
+);
+
+-- Tabela za vezu Facility-Image (OneToMany)
+CREATE TABLE facility_images (
+    facility_id BIGINT NOT NULL,
+    images_id BIGINT NOT NULL,
+    FOREIGN KEY (facility_id) REFERENCES facility(id),
+    FOREIGN KEY (images_id) REFERENCES image(id)
+);
+
+-- Tabela za review-e
+CREATE TABLE review (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    equipment_grade INT NOT NULL,
+    staff_grade INT NOT NULL,
+    hygiene_grade INT NOT NULL,
+    space_grade INT NOT NULL,
+    text TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    facility_id BIGINT NOT NULL,
+    user_email VARCHAR(255) NOT NULL,
+    FOREIGN KEY (facility_id) REFERENCES facility(id),
+    FOREIGN KEY (user_email) REFERENCES users(email)
+);
+
+-- TEST PODACI
+
+-- Korisnici
+INSERT INTO users VALUES
+('marko.petrovic@example.com', '$2a$10$abcdefghijklmnopqrstuv', 'Marko Petrović', 'marko_p', '2023-01-15', '+381601234567', '1990-05-20', 'Knez Mihailova 15', 'Beograd', '11000', 'USER'),
+('ana.jovanovic@example.com', '$2a$10$abcdefghijklmnopqrstuv', 'Ana Jovanović', 'ana_j', '2023-02-20', '+381611234567', '1992-08-10', 'Njegoševa 32', 'Novi Sad', '21000', 'USER'),
+('stefan.nikolic@example.com', '$2a$10$abcdefghijklmnopqrstuv', 'Stefan Nikolić', 'stefan_n', '2023-03-10', '+381621234567', '1988-11-25', 'Cara Dušana 45', 'Niš', '18000', 'MANAGER'),
+('jelena.djordjevic@example.com', '$2a$10$abcdefghijklmnopqrstuv', 'Јелена Ђорђевић', 'jelena_dj', '2023-04-05', '+381631234567', '1995-03-15', 'Булевар ослобођења 78', 'Београд', '11000', 'USER'),
+('nikola.stojanovic@example.com', '$2a$10$abcdefghijklmnopqrstuv', 'Никола Стојановић', 'nikola_st', '2023-05-12', '+381641234567', '1991-07-30', 'Страхињића Бана 12', 'Крагујевац', '34000', 'USER'),
+('milica.ilic@example.com', '$2a$10$abcdefghijklmnopqrstuv', 'Милица Илић', 'milica_i', '2023-06-18', '+381651234567', '1993-12-05', 'Královа 23', 'Subotica', '24000', 'ADMIN');
+
+-- PDF opisi
+INSERT INTO description (server_filename) VALUES
+('fitness_arena_beograd_desc.pdf'),
+('teretana_iron_gym_desc.pdf'),
+('sportski_centar_novi_sad_desc.pdf'),
+('gym_powerhouse_nis_desc.pdf'),
+('wellness_spa_kragujevac_desc.pdf'),
+('crossfit_box_beograd_desc.pdf'),
+('bazen_olimp_subotica_desc.pdf'),
+('yoga_studio_zen_desc.pdf'),
+('pilates_centar_cacak_desc.pdf'),
+('teretana_atlas_zemun_desc.pdf');
+
+-- Objekti (Facilities) - kombinacija ćirilice i latinice
+INSERT INTO facility (name, city, address, description, active, pdf_description_id) VALUES
+('Fitness Arena Beograd', 'Beograd', 'Bulevar kralja Aleksandra 121', 'Модеран фитнес центар са најновијом опремом за вежбање. Нудимо групне тренинге, персоналне тренере и савремене справе. Простор је климатизован и опремљен свлачионицама са туш кабинама.', true, 1),
+
+('Теретана Iron Gym', 'Нови Сад', 'Булевар ослобођења 45', 'Специјализована теретана за бодибилдинг и power lifting. Имамо комплетан сет олимпијских шипки, bench press станице и cable машине. Искусни тренери су увек доступни за помоћ.', true, 2),
+
+('Спортски центар Партизан', 'Београд', 'Хумска 1', 'Велики спортски комплекс који укључује базен олимпијских димензија, теретану, сале за групне вежбе, сквош терене и спа центар. Идеалан за породице и професионалне спортисте.', true, 3),
+
+('Gym Powerhouse Niš', 'Niš', 'Obrenovićeva 34', 'Просторна теретана са фокусом на функционални тренинг. Поседујемо kettlebells, battle ropes, TRX системе и простор за кардио вежбе. Организујемо boot camp тренинге.', true, 4),
+
+('Wellness & Spa Kragujevac', 'Kragujevac', 'Svetozara Markovića 88', 'Luksuzni wellness centar koji kombinuje fitnes, spa tretmane, saune i đakuzi. Нудимо масаже, физиотерапију и нутриционистичке консултације. Mirno okruženje za opuštanje i regeneraciju.', true, 5),
+
+('CrossFit Box Belgrade', 'Београд', 'Савска 23', 'Специјализован CrossFit центар са сертификованим тренерима. Радимо WOD-ове сваког дана, имамо rig за pull-upove, bumper plates и велики избор cardio опреме.', true, 6),
+
+('Базен Олимп', 'Суботица', 'Матије Корвина 12', 'Savremeni zatvoreni bazen sa 8 staza, dubina 2 metra. Organizujemo školu plivanja za decu i odrasle, aqua aerobik i treninze za takmičare. Вода се филтрира и загрева.', true, 7),
+
+('Yoga Studio Zen', 'Novi Sad', 'Dunavska 15', 'Смиран простор за практиковање йоге и meditације. Нудимо Hatha, Vinyasa, Yin yoga и пренаталну йогу. Мали групни часови обезбеђују персонализовану пажњу. Sve rekvizite obezbeđujemo.', true, 8),
+
+('Пилатес центар FlexiBody', 'Чачак', 'Жупана Страцимира 67', 'Специјализован студио за Pilates са Reformer машинама. Часови су прилагођени свим нивоима физичке спреме. Помаже у јачању core мускулатуре, побољшању постуре и флексибилности.', true, 9),
+
+('Теретана Atlas', 'Земун', 'Главна 89', 'Локална теретана са odličnim odnosom cene i kvaliteta. Имамо сав потребан equipment za силовой тренинг и кардио. Чланарина је приступачна, а атмосфера пријатељска.', true, 10),
+
+('Boxing Club Champion', 'Beograd', 'Кнегиње Зорке 34', 'Profesionalni boks klub sa ringom i opremom za trening. Тренери су бивши професионални боксери. Радимо са почетницима и такмичарима. Спаринг сесије се organizuju редовно.', true, 1),
+
+('Martial Arts Dojo Samurai', 'Ниш', 'Обреновићева 56', 'Школа борилачких вештина која предаје karate, judo, aikido и krav maga. Програми за дјецу и одрасле. Фокус на дисциплини, поштовању и self-defense вјештинама.', true, 2),
+
+('Dance Studio Ritmika', 'Beograd', 'Makedonska 12', 'Плесни студио који нуди časove hip-hop, salsa, bachata, contemporary и балета. Велики огледали и квалитетна озвучења. Припремамо грupe за такмичења и наступе.', true, 3),
+
+('Climbing Wall Vertigo', 'Нови Сад', 'Футошка 45', 'Indoor penjalički zid sa rutama različitih težina. Имамо bouldering секцију и високе зидове са osiguranjem. Обука за почетнике је obavezna. Опрема се може iznajmiti.', true, 4),
+
+('Tennis Club AS', 'Београд', 'Аутокоманда бб', 'Тениски клуб са 4 clay courts и 2 hard courts. Organizujemo školu tenisa, treninze za sve uzraste i turnire. Klub house има свлачионице и мали кафе.', true, 5),
+
+('Теретана Spartacus', 'Крагујевац', 'Král Petra 123', 'Велика теретана са три нивоа - силовой трениг, кардио зона и функционални тренинг. Групни часови укључују spinning, zumbu, step aerobik. Имамо женску секцију.', true, 6),
+
+('Aqua Park Summerland', 'Subotica', 'Палићки пут 15', 'Летњи аква парк са tobоganima, lazy river басеном и детским зоном. Безбедност је на првом месту. Спасиоци su увек на dužnosti. Идеалан за породична окупљања.', true, 7),
+
+('Indoor Soccer Arena', 'Novi Sad', 'Футошка 78', 'Zatvorena fudbalska dvorana са вештачком травом. Идеална za mali fudbal 5 на 5 или 7 на 7. Izdajemo терене по сату. Организујемо lige и turnire.', true, 8),
+
+('Gym Dynamic Fit', 'Ниш', 'Војводе Танкосића 90', 'Модерна теретана у центру града. Опремљена најновијим Technogym справама. Персонални тренери имају међународне сертификате. Нудимо исхрану plans и body composition анализу.', true, 9),
+
+('Spinning Studio CycleMax', 'Београд', 'Цвијићева 45', 'Специјализован студио за spinning са 30 bicikala. Часови су праћени енергичном музиком и мотивишућим инструкторима. Свако добија монитор за праћење пулса и перформанси.', true, 10);
+
+-- Discipline
+INSERT INTO facility_disciplines VALUES
+(1, 'Фитнес'), (1, 'Кардио'), (1, 'Групни тренинзи'),
+(2, 'Бодибилдинг'), (2, 'Powerlifting'), (2, 'Силовой тренинг'),
+(3, 'Пливање'), (3, 'Фитнес'), (3, 'Сквош'), (3, 'Spa'),
+(4, 'Функционални тренинг'), (4, 'CrossFit'), (4, 'Кардио'),
+(5, 'Wellness'), (5, 'Spa'), (5, 'Фитнес'), (5, 'Физиотерапија'),
+(6, 'CrossFit'), (6, 'Weightlifting'), (6, 'Гимнастика'),
+(7, 'Пливање'), (7, 'Aqua aerobik'), (7, 'Школа пливања'),
+(8, 'Yoga'), (8, 'Meditација'), (8, 'Stretching'),
+(9, 'Pilates'), (9, 'Core training'), (9, 'Stretching'),
+(10, 'Фитнес'), (10, 'Силовой тренинг'), (10, 'Кардио'),
+(11, 'Бокс'), (11, 'Кондициони тренинг'), (11, 'Спаринг'),
+(12, 'Karate'), (12, 'Judo'), (12, 'Aikido'), (12, 'Krav Maga'),
+(13, 'Hip-hop'), (13, 'Salsa'), (13, 'Bachata'), (13, 'Balet'),
+(14, 'Penjanje'), (14, 'Bouldering'),
+(15, 'Тенис'), (15, 'Школа тениса'),
+(16, 'Фитнес'), (16, 'Spinning'), (16, 'Zumba'), (16, 'Step aerobik'),
+(17, 'Plivanje'), (17, 'Tobogani'), (17, 'Zabava'),
+(18, 'Футбал'), (18, 'Indoor soccer'),
+(19, 'Фитнес'), (19, 'Силовой тренинг'), (19, 'Персонални тренинг'),
+(20, 'Spinning'), (20, 'Cycling'), (20, 'HIIT');
+
+-- Slike
+INSERT INTO image (server_filename) VALUES
+('fitness_arena_1.jpg'), ('fitness_arena_2.jpg'), ('fitness_arena_3.jpg'),
+('iron_gym_1.jpg'), ('iron_gym_2.jpg'),
+('sportski_centar_1.jpg'), ('sportski_centar_2.jpg'), ('sportski_centar_3.jpg'),
+('powerhouse_1.jpg'), ('powerhouse_2.jpg'),
+('wellness_spa_1.jpg'), ('wellness_spa_2.jpg'),
+('crossfit_box_1.jpg'), ('crossfit_box_2.jpg'),
+('bazen_olimp_1.jpg'), ('bazen_olimp_2.jpg'),
+('yoga_zen_1.jpg'), ('yoga_zen_2.jpg'),
+('pilates_1.jpg'), ('pilates_2.jpg'),
+('atlas_1.jpg'), ('atlas_2.jpg'),
+('boxing_1.jpg'), ('boxing_2.jpg'),
+('dojo_1.jpg'), ('dojo_2.jpg'),
+('dance_studio_1.jpg'), ('dance_studio_2.jpg'),
+('climbing_1.jpg'), ('climbing_2.jpg'),
+('tennis_1.jpg'), ('tennis_2.jpg'),
+('spartacus_1.jpg'), ('spartacus_2.jpg'),
+('aquapark_1.jpg'), ('aquapark_2.jpg'),
+('soccer_1.jpg'), ('soccer_2.jpg'),
+('dynamic_1.jpg'), ('dynamic_2.jpg'),
+('spinning_1.jpg'), ('spinning_2.jpg');
+
+-- Veze Facility-Images
+INSERT INTO facility_images VALUES
+(1, 1), (1, 2), (1, 3),
+(2, 4), (2, 5),
+(3, 6), (3, 7), (3, 8),
+(4, 9), (4, 10),
+(5, 11), (5, 12),
+(6, 13), (6, 14),
+(7, 15), (7, 16),
+(8, 17), (8, 18),
+(9, 19), (9, 20),
+(10, 21), (10, 22),
+(11, 23), (11, 24),
+(12, 25), (12, 26),
+(13, 27), (13, 28),
+(14, 29), (14, 30),
+(15, 31), (15, 32),
+(16, 33), (16, 34),
+(17, 35), (17, 36),
+(18, 37), (18, 38),
+(19, 39), (19, 40),
+(20, 41), (20, 42);
+
+-- Review-i
+INSERT INTO review (equipment_grade, staff_grade, hygiene_grade, space_grade, text, facility_id, user_email) VALUES
+(5, 5, 5, 4, 'Одлична теретана са модерном опремом!', 1, 'marko.petrovic@example.com'),
+(4, 5, 4, 4, 'Тренери су веома љубазни и стручни.', 1, 'ana.jovanovic@example.com'),
+(5, 4, 5, 5, 'Простор је веома чист и пространан.', 1, 'stefan.nikolic@example.com'),
+(5, 5, 4, 4, 'Најбоља теретана за озбиљан тренинг!', 2, 'jelena.djordjevic@example.com'),
+(4, 4, 3, 4, 'Добра опрема, могло би више prostora.', 2, 'nikola.stojanovic@example.com'),
+(5, 5, 5, 5, 'Sve pohvale! Bazen je fantastičan.', 3, 'milica.ilic@example.com'),
+(5, 5, 4, 5, 'Одличан спортски центар за породицу.', 3, 'marko.petrovic@example.com'),
+(4, 5, 5, 4, 'Spa zona je prelepa, vraćam se sigurno.', 3, 'ana.jovanovic@example.com'),
+(4, 4, 4, 5, 'Odličan prostor za funkcionalni trening.', 4, 'stefan.nikolic@example.com'),
+(5, 5, 5, 5, 'Boot camp тренинзи су brutal али ефикасни!', 4, 'jelena.djordjevic@example.com'),
+(5, 5, 5, 4, 'Wellness centar je oaza mira.', 5, 'nikola.stojanovic@example.com'),
+(5, 4, 5, 5, 'Масажа је била невероватна!', 5, 'milica.ilic@example.com'),
+(5, 5, 4, 4, 'CrossFit тренинзи су изазовни!', 6, 'marko.petrovic@example.com'),
+(4, 5, 4, 4, 'Сертификовани тренери знају свој posao.', 6, 'ana.jovanovic@example.com'),
+(5, 5, 5, 5, 'Najсистији базен који сам видела!', 7, 'stefan.nikolic@example.com'),
+(5, 4, 5, 4, 'Школа пливања је одлична за моју ћерку.', 7, 'jelena.djordjevic@example.com'),
+(5, 5, 5, 5, 'Yoga часови су ми променили живот.', 8, 'nikola.stojanovic@example.com'),
+(5, 5, 4, 4, 'Инструктор је фантастичан!', 8, 'milica.ilic@example.com'),
+(4, 5, 4, 4, 'Pilates sa Reformerima je odličan!', 9, 'marko.petrovic@example.com'),
+(4, 4, 4, 3, 'Солидна теретана за цену.', 10, 'ana.jovanovic@example.com'),
+(5, 5, 4, 4, 'Бокс тренинзи су brutal!', 11, 'stefan.nikolic@example.com'),
+(5, 5, 4, 4, 'Одличан dojo za учење борилачких вештина.', 12, 'jelena.djordjevic@example.com'),
+(5, 4, 5, 4, 'Hip-hop часови су energični!', 13, 'nikola.stojanovic@example.com'),
+(5, 5, 4, 5, 'Penjački zid je izazovan ali bezbedan.', 14, 'milica.ilic@example.com'),
+(5, 5, 5, 5, 'Тениски клуб je vrhунски!', 15, 'marko.petrovic@example.com'),
+(4, 4, 4, 4, 'Велика теретана са много opcija.', 16, 'ana.jovanovic@example.com'),
+(5, 5, 5, 5, 'Деца су била oduševljena toboganima!', 17, 'stefan.nikolic@example.com'),
+(4, 4, 3, 4, 'Добар терен за мали фудбал.', 18, 'jelena.djordjevic@example.com'),
+(5, 5, 5, 5, 'Најбоља теретана у Нишу!', 19, 'nikola.stojanovic@example.com'),
+(5, 5, 4, 4, 'Spinning часови су интензивни!', 20, 'milica.ilic@example.com');
