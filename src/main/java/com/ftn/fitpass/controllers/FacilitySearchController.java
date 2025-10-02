@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -28,8 +29,20 @@ public class FacilitySearchController {
         this.facilitySearchService = facilitySearchService;
     }
 
+//    @PostMapping("/search")
+//    public SearchPage<FacilityDocument> searchFacilities(@RequestBody FacilitySearchRequest request, Pageable pageable) {
+//        return facilitySearchService.searchFacilities(request, pageable);
+//    }
+    
     @PostMapping("/search")
-    public SearchPage<FacilityDocument> searchFacilities(@RequestBody FacilitySearchRequest request, Pageable pageable) {
-        return facilitySearchService.searchFacilities(request, pageable);
+    public ResponseEntity<Page<FacilityDocument>> searchFacilities(@RequestBody FacilitySearchRequest request, Pageable pageable) {
+    	
+    	SearchPage<FacilityDocument> searchPage = facilitySearchService.searchFacilities(request, pageable);
+        List<FacilityDocument> docs = searchPage.getSearchHits().stream()
+            .map(hit -> hit.getContent())
+            .collect(Collectors.toList());
+        PageImpl<FacilityDocument> pageDocs = new PageImpl<>(docs, pageable, searchPage.getTotalElements());
+
+        return ResponseEntity.ok(pageDocs);
     }
 }

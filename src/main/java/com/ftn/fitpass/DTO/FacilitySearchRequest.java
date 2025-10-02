@@ -103,4 +103,15 @@ public class FacilitySearchRequest {
 	public void setSortOrder(String sortOrder) {
 		this.sortOrder = sortOrder;
 	}
+	@Override
+	public String toString() {
+		return "FacilitySearchRequest [name=" + name + ", nameSearchType=" + nameSearchType + ", description="
+				+ description + ", descriptionSearchType=" + descriptionSearchType + ", pdfText=" + pdfText
+				+ ", pdfTextSearchType=" + pdfTextSearchType + ", cities=" + cities + ", disciplines=" + disciplines
+				+ ", minReviewCount=" + minReviewCount + ", maxReviewCount=" + maxReviewCount + ", minAvgRating="
+				+ minAvgRating + ", maxAvgRating=" + maxAvgRating + ", sortField=" + sortField + ", sortOrder="
+				+ sortOrder + "]";
+	}
+	
+	
 }

@@ -32,6 +32,7 @@ public class FacilitySearchServiceImpl implements FacilitySearchService {
 
     @Override
     public SearchPage<FacilityDocument> searchFacilities(FacilitySearchRequest request, Pageable pageable) {
+    	System.out.println("Upit za ES: " + request.toString());
         Query query = BoolQuery.of(b -> {
         	
         	if (request.getName() != null && !request.getName().isEmpty()) {
@@ -121,19 +122,45 @@ public class FacilitySearchServiceImpl implements FacilitySearchService {
             if (request.getMinReviewCount() != null || request.getMaxReviewCount() != null) {
                 int min = request.getMinReviewCount() != null ? request.getMinReviewCount() : Integer.MIN_VALUE;
                 int max = request.getMaxReviewCount() != null ? request.getMaxReviewCount() : Integer.MAX_VALUE;
-
-                b.filter(f -> f.range(r -> r.field("reviewCount").gte(JsonData.of(min)).lte(JsonData.of(max))));
+                
+                Double minDouble = (double) min;
+                Double maxDouble = (double) max;
+                
+                b.filter(f -> f.range(r -> r .number(n -> n 
+                        .field("reviewCount") // OVDE SE POSTAVLJA POLJE!
+                        .gte(minDouble) // direktno prosleđujemo int/Integer
+                        .lte(maxDouble)
+                    )
+                ));
+                
+//                b.filter(f -> f.range(r -> r
+//                        .field("reviewCount") // Očekujete da je ovo deo RangeQuery.Builder-a
+//                        .gte(JsonData.of(min))
+//                        .lte(JsonData.of(max))
+//                	)
+//                );
+//                
+//                b.filter(f -> f.range(r -> r.field("reviewCount").gte(JsonData.of(min)).lte(JsonData.of(max))));
             }
 
             if (request.getMinAvgRating() != null || request.getMaxAvgRating() != null) {
                 double min = request.getMinAvgRating() != null ? request.getMinAvgRating() : Double.MIN_VALUE;
                 double max = request.getMaxAvgRating() != null ? request.getMaxAvgRating() : Double.MAX_VALUE;
 
-                b.filter(f -> f.range(r -> r.field("avgEquipmentGrade").gte(JsonData.of(min)).lte(JsonData.of(max))));
+                b.filter(f -> f.range(r -> r .number(n -> n 
+                        .field("avgEquipmentGrade") // OVDE SE POSTAVLJA POLJE!
+                        .gte(min) // direktno prosleđujemo int/Integer
+                        .lte(max)
+                    )
+                ));
+                
+//                b.filter(f -> f.range(r -> r.field("avgEquipmentGrade").gte(JsonData.of(min)).lte(JsonData.of(max))));
             }
-
+            
             return b;
         })._toQuery();
+        
+//        System.out.println("Upit za ES: " + query._toQuery().toString());
         
         NativeQueryBuilder builder = new NativeQueryBuilder()
                 .withQuery(query)
