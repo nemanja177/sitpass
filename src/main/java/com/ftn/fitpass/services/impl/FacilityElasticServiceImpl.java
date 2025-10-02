@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.IndexOperations;
 import org.springframework.stereotype.Service;
 
 import com.ftn.fitpass.DTO.FacilityDocument;
@@ -31,6 +33,9 @@ public class FacilityElasticServiceImpl implements FacilityElasticService {
 	
 	@Autowired
     private FacilityDocumentRepository facilityDocumentRepository;
+	
+	@Autowired
+	private ElasticsearchOperations eo;
 	
 
 //    public FacilityElasticServiceImpl(FacilityRepository facilityRepository,
@@ -85,6 +90,16 @@ public class FacilityElasticServiceImpl implements FacilityElasticService {
     @Transactional
     public void deleteFacilityIndex(Long facilityId) {
         facilityDocumentRepository.deleteById(facilityId.toString());
+    }
+    
+    public void deleteAllFacilityIndex() {
+        IndexOperations indexOps = eo.indexOps(FacilityDocument.class);
+        boolean deleted = indexOps.delete();
+        if (deleted) {
+            System.out.println("Indeks facility je uspešno obrisan.");
+        } else {
+            System.out.println("Indeks facility nije pronađen ili greška pri brisanju.");
+        }
     }
 	
 }

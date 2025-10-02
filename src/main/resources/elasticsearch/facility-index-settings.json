@@ -1,0 +1,80 @@
+{
+  "settings": {
+    "analysis": {
+      "char_filter": {
+        "latin_to_cyrillic": {
+          "type": "mapping",
+          "mappings": [
+            "a => а",
+            "b => б",
+            "c => ц",
+            "č => ч",
+            "ć => ћ",
+            "d => д",
+            "dž => џ",
+            "đ => ђ",
+            "e => е",
+            "f => ф",
+            "g => г",
+            "h => х",
+            "i => и",
+            "j => ј",
+            "k => к",
+            "l => л",
+            "lj => љ",
+            "m => м",
+            "n => н",
+            "nj => њ",
+            "o => о",
+            "p => п",
+            "r => р",
+            "s => с",
+            "š => ш",
+            "t => т",
+            "u => у",
+            "v => в",
+            "z => з",
+            "ž => ж"
+          ]
+        }
+      },
+      "filter": {
+        "serbian_stop": {
+          "type": "stop",
+          "stopwords": "_serbian_"
+        },
+        "serbian_stemmer": {
+          "type": "stemmer",
+          "language": "serbian"
+        }
+      },
+      "analyzer": {
+        "serbian_analyzer": {
+          "type": "custom",
+          "char_filter": [ "latin_to_cyrillic" ],
+          "tokenizer": "standard",
+          "filter": [ "lowercase", "serbian_stop", "serbian_stemmer" ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "name": {
+        "type": "text",
+        "analyzer": "serbian_analyzer",
+        "search_analyzer": "serbian_analyzer"
+      },
+      "description": {
+        "type": "text",
+        "analyzer": "serbian_analyzer",
+        "search_analyzer": "serbian_analyzer"
+      },
+      "pdfDescriptionText": {
+        "type": "text",
+        "analyzer": "serbian_analyzer",
+        "search_analyzer": "serbian_analyzer"
+      }
+    }
+  }
+}

@@ -6,26 +6,28 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.Setting;
 
 @Document(indexName = "facility")
+@Setting(settingPath = "/elasticsearch/facility-index-settings.json")
 public class FacilityDocument {
 
     @Id
     private String id;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = "serbian_analyzer", searchAnalyzer = "serbian_analyzer")
     private String name;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = "serbian_analyzer", searchAnalyzer = "serbian_analyzer")
     private String city;
 
     @Field(type = FieldType.Text)
     private String address;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = "serbian_analyzer", searchAnalyzer = "serbian_analyzer")
     private String description;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = "serbian_analyzer", searchAnalyzer = "serbian_analyzer")
     private String pdfDescriptionText; 
 
     @Field(type = FieldType.Keyword)

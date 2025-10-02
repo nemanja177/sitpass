@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.ftn.fitpass.DTO.AdvancedSearchRequest;
+import com.ftn.fitpass.DTO.BasicSearchRequest;
 import com.ftn.fitpass.DTO.FacilityDocument;
 import com.ftn.fitpass.DTO.FacilitySearchRequest;
 import com.ftn.fitpass.services.FacilitySearchService;
@@ -34,15 +36,46 @@ public class FacilitySearchController {
 //        return facilitySearchService.searchFacilities(request, pageable);
 //    }
     
-    @PostMapping("/search")
-    public ResponseEntity<Page<FacilityDocument>> searchFacilities(@RequestBody FacilitySearchRequest request, Pageable pageable) {
-    	
-    	SearchPage<FacilityDocument> searchPage = facilitySearchService.searchFacilities(request, pageable);
+//    @PostMapping("/search")
+//    public SearchPage<FacilityDocument> searchFacilities(@RequestBody FacilitySearchRequest request, Pageable pageable) {
+//        return facilitySearchService.searchFacilities(request, pageable);
+//    }
+    
+//    @PostMapping("/search")
+//    public ResponseEntity<Page<FacilityDocument>> searchFacilities(@RequestBody FacilitySearchRequest request, Pageable pageable) {
+//    	
+//    	System.out.println("IZ FRONTA: " + request.toString());
+//    	
+//    	SearchPage<FacilityDocument> searchPage = facilitySearchService.searchFacilities(request, pageable);
+//        List<FacilityDocument> docs = searchPage.getSearchHits().stream()
+//            .map(hit -> hit.getContent())
+//            .collect(Collectors.toList());
+//        PageImpl<FacilityDocument> pageDocs = new PageImpl<>(docs, pageable, searchPage.getTotalElements());
+//
+//        return ResponseEntity.ok(pageDocs);
+//    }
+    
+    @PostMapping("/basicsearch")
+    public ResponseEntity<Page<FacilityDocument>> basicSearch(
+            @RequestBody BasicSearchRequest request,
+            Pageable pageable) {
+        SearchPage<FacilityDocument> searchPage = facilitySearchService.basicSearch(request.getKeywords(), pageable);
         List<FacilityDocument> docs = searchPage.getSearchHits().stream()
-            .map(hit -> hit.getContent())
-            .collect(Collectors.toList());
+                .map(hit -> hit.getContent())
+                .collect(Collectors.toList());
         PageImpl<FacilityDocument> pageDocs = new PageImpl<>(docs, pageable, searchPage.getTotalElements());
+        return ResponseEntity.ok(pageDocs);
+    }
 
+    @PostMapping("/advancedsearch")
+    public ResponseEntity<Page<FacilityDocument>> advancedSearch(
+            @RequestBody AdvancedSearchRequest request,
+            Pageable pageable) {
+        SearchPage<FacilityDocument> searchPage = facilitySearchService.advancedSearch(request, pageable);
+        List<FacilityDocument> docs = searchPage.getSearchHits().stream()
+                .map(hit -> hit.getContent())
+                .collect(Collectors.toList());
+        PageImpl<FacilityDocument> pageDocs = new PageImpl<>(docs, pageable, searchPage.getTotalElements());
         return ResponseEntity.ok(pageDocs);
     }
 }

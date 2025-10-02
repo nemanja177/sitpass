@@ -65,6 +65,12 @@ public class FacilityElasticController {
     public ResponseEntity<?> getAllFacilities() {
         return ResponseEntity.ok(facilityService.findAll());
     }
+    
+    @DeleteMapping("/deindex")
+    public ResponseEntity<?> deindex() {
+        facilityElasticService.deleteAllFacilityIndex();
+        return ResponseEntity.ok().build();
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getFacilityById(@PathVariable Long id) {

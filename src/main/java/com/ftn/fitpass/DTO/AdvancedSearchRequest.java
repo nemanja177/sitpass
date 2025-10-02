@@ -2,7 +2,7 @@ package com.ftn.fitpass.DTO;
 
 import java.util.List;
 
-public class FacilitySearchRequest {
+public class AdvancedSearchRequest {
     private String name;        
     private String nameSearchType;
     private String description; 
@@ -18,14 +18,11 @@ public class FacilitySearchRequest {
 
     private String sortField;         
     private String sortOrder;
-    
-    private List<String> keywords;  
-    
-	public List<String> getKeywords() {
-		return keywords;
+	public String getName() {
+		return name;
 	}
-	public void setKeywords(List<String> keywords) {
-		this.keywords = keywords;
+	public void setName(String name) {
+		this.name = name;
 	}
 	public String getNameSearchType() {
 		return nameSearchType;
@@ -33,35 +30,29 @@ public class FacilitySearchRequest {
 	public void setNameSearchType(String nameSearchType) {
 		this.nameSearchType = nameSearchType;
 	}
-	public String getDescriptionSearchType() {
-		return descriptionSearchType;
-	}
-	public void setDescriptionSearchType(String descriptionSearchType) {
-		this.descriptionSearchType = descriptionSearchType;
-	}
-	public String getPdfTextSearchType() {
-		return pdfTextSearchType;
-	}
-	public void setPdfTextSearchType(String pdfTextSearchType) {
-		this.pdfTextSearchType = pdfTextSearchType;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
 	public String getDescription() {
 		return description;
 	}
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	public String getDescriptionSearchType() {
+		return descriptionSearchType;
+	}
+	public void setDescriptionSearchType(String descriptionSearchType) {
+		this.descriptionSearchType = descriptionSearchType;
+	}
 	public String getPdfText() {
 		return pdfText;
 	}
 	public void setPdfText(String pdfText) {
 		this.pdfText = pdfText;
+	}
+	public String getPdfTextSearchType() {
+		return pdfTextSearchType;
+	}
+	public void setPdfTextSearchType(String pdfTextSearchType) {
+		this.pdfTextSearchType = pdfTextSearchType;
 	}
 	public List<String> getCities() {
 		return cities;
@@ -113,13 +104,13 @@ public class FacilitySearchRequest {
 	}
 	@Override
 	public String toString() {
-		return "FacilitySearchRequest [name=" + name + ", nameSearchType=" + nameSearchType + ", description="
+		return "AdvancedSearchRequest [name=" + name + ", nameSearchType=" + nameSearchType + ", description="
 				+ description + ", descriptionSearchType=" + descriptionSearchType + ", pdfText=" + pdfText
 				+ ", pdfTextSearchType=" + pdfTextSearchType + ", cities=" + cities + ", disciplines=" + disciplines
 				+ ", minReviewCount=" + minReviewCount + ", maxReviewCount=" + maxReviewCount + ", minAvgRating="
 				+ minAvgRating + ", maxAvgRating=" + maxAvgRating + ", sortField=" + sortField + ", sortOrder="
-				+ sortOrder + ", keywords=" + keywords + "]";
+				+ sortOrder + "]";
 	}
-	
-	
+
+    
 }

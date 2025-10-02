@@ -3,6 +3,7 @@ package com.ftn.fitpass.services.impl;
 import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.MatchAllQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.json.JsonData;
 
@@ -15,8 +16,10 @@ import org.springframework.data.elasticsearch.core.SearchHitSupport;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
+import com.ftn.fitpass.DTO.AdvancedSearchRequest;
 import com.ftn.fitpass.DTO.FacilityDocument;
 import com.ftn.fitpass.DTO.FacilitySearchRequest;
 import com.ftn.fitpass.services.FacilitySearchService;
@@ -31,11 +34,36 @@ public class FacilitySearchServiceImpl implements FacilitySearchService {
     }
 
     @Override
-    public SearchPage<FacilityDocument> searchFacilities(FacilitySearchRequest request, Pageable pageable) {
-    	System.out.println("Upit za ES: " + request.toString());
+    public SearchPage<FacilityDocument> basicSearch(List<String> keywords, Pageable pageable) {
+        Query query = null;
+        if (keywords == null || keywords.isEmpty()) {
+            query = MatchAllQuery.of(m -> m)._toQuery();
+        } else {
+            query = BoolQuery.of(b -> b.must(mb -> mb.bool(bq -> {
+                for (String token : keywords) {
+                    bq.should(sb -> sb.match(m -> m.field("name").query(token)));
+                    bq.should(sb -> sb.match(m -> m.field("description").query(token)));
+                    bq.should(sb -> sb.match(m -> m.field("pdfDescriptionText").query(token)));
+                }
+                return bq;
+            })))._toQuery();
+        }
+
+        NativeQuery nativeQuery = NativeQuery.builder()
+                .withQuery(query)
+                .withPageable(pageable)
+                .build();
+
+        SearchHits<FacilityDocument> searchHits = elasticsearchOperations.search(nativeQuery, FacilityDocument.class);
+
+        return SearchHitSupport.searchPageFor(searchHits, pageable);
+    }
+
+    @Override
+    public SearchPage<FacilityDocument> advancedSearch(AdvancedSearchRequest request, Pageable pageable) {
         Query query = BoolQuery.of(b -> {
-        	
-        	if (request.getName() != null && !request.getName().isEmpty()) {
+
+            if (request.getName() != null && !request.getName().isEmpty()) {
                 switch (request.getNameSearchType()) {
                     case "phrase":
                         b.must(m -> m.matchPhrase(mp -> mp.field("name").query(request.getName())));
@@ -85,19 +113,6 @@ public class FacilitySearchServiceImpl implements FacilitySearchService {
                         break;
                 }
             }
-        	
-        	
-            if (request.getName() != null && !request.getName().isEmpty()) {
-                b.must(m -> m.match(t -> t.field("name").query(request.getName())));
-            }
-
-            if (request.getDescription() != null && !request.getDescription().isEmpty()) {
-                b.must(m -> m.match(t -> t.field("description").query(request.getDescription())));
-            }
-
-            if (request.getPdfText() != null && !request.getPdfText().isEmpty()) {
-                b.must(m -> m.match(t -> t.field("pdfDescriptionText").query(request.getPdfText())));
-            }
 
             if (request.getCities() != null && !request.getCities().isEmpty()) {
                 b.filter(f -> f.terms(t -> t.field("city.keyword").terms(terms ->
@@ -122,62 +137,170 @@ public class FacilitySearchServiceImpl implements FacilitySearchService {
             if (request.getMinReviewCount() != null || request.getMaxReviewCount() != null) {
                 int min = request.getMinReviewCount() != null ? request.getMinReviewCount() : Integer.MIN_VALUE;
                 int max = request.getMaxReviewCount() != null ? request.getMaxReviewCount() : Integer.MAX_VALUE;
-                
-                Double minDouble = (double) min;
-                Double maxDouble = (double) max;
-                
-                b.filter(f -> f.range(r -> r .number(n -> n 
-                        .field("reviewCount") // OVDE SE POSTAVLJA POLJE!
-                        .gte(minDouble) // direktno prosleđujemo int/Integer
-                        .lte(maxDouble)
-                    )
-                ));
-                
-//                b.filter(f -> f.range(r -> r
-//                        .field("reviewCount") // Očekujete da je ovo deo RangeQuery.Builder-a
-//                        .gte(JsonData.of(min))
-//                        .lte(JsonData.of(max))
-//                	)
-//                );
-//                
-//                b.filter(f -> f.range(r -> r.field("reviewCount").gte(JsonData.of(min)).lte(JsonData.of(max))));
+                Double minD = (double) min;
+                Double maxD = (double) max;
+
+                b.filter(f -> f.range(r -> r.number(n -> n.field("reviewCount").gte(minD).lte(maxD))));
             }
 
             if (request.getMinAvgRating() != null || request.getMaxAvgRating() != null) {
                 double min = request.getMinAvgRating() != null ? request.getMinAvgRating() : Double.MIN_VALUE;
                 double max = request.getMaxAvgRating() != null ? request.getMaxAvgRating() : Double.MAX_VALUE;
 
-                b.filter(f -> f.range(r -> r .number(n -> n 
-                        .field("avgEquipmentGrade") // OVDE SE POSTAVLJA POLJE!
-                        .gte(min) // direktno prosleđujemo int/Integer
-                        .lte(max)
-                    )
-                ));
-                
-//                b.filter(f -> f.range(r -> r.field("avgEquipmentGrade").gte(JsonData.of(min)).lte(JsonData.of(max))));
+                b.filter(f -> f.range(r -> r.number(n -> n.field("avgEquipmentGrade").gte(min).lte(max))));
             }
-            
+
+//            if (request.getSortField() != null && !request.getSortField().isEmpty()) {
+//                SortOrder order = "desc".equalsIgnoreCase(request.getSortOrder()) ? SortOrder.Desc : SortOrder.Asc;
+//                b.withSort(s -> s.field(f -> f.field(request.getSortField()).order(order)));
+//            }
+
             return b;
         })._toQuery();
-        
-//        System.out.println("Upit za ES: " + query._toQuery().toString());
-        
+
         NativeQueryBuilder builder = new NativeQueryBuilder()
-                .withQuery(query)
-                .withPageable(pageable);
+              .withQuery(query)
+              .withPageable(pageable);
 
-        if (request.getSortField() != null && !request.getSortField().isEmpty()) {
-            SortOrder order = "desc".equalsIgnoreCase(request.getSortOrder()) ? SortOrder.Desc : SortOrder.Asc;
-            builder.withSort(s -> s
-                .field(f -> f
-                    .field(request.getSortField())
-                    .order(order)
-                ));
-        }
+      if (request.getSortField() != null && !request.getSortField().isEmpty()) {
+          SortOrder order = "desc".equalsIgnoreCase(request.getSortOrder()) ? SortOrder.Desc : SortOrder.Asc;
+          builder.withSort(s -> s.field(f -> f.field(request.getSortField()).order(order)));
+      }
 
-        NativeQuery nativeQuery = builder.build();
+      NativeQuery nativeQuery = builder.build();
 
         SearchHits<FacilityDocument> searchHits = elasticsearchOperations.search(nativeQuery, FacilityDocument.class);
+
         return SearchHitSupport.searchPageFor(searchHits, pageable);
     }
+    
+    
+    
+    
+//    @Override
+//    public SearchPage<FacilityDocument> searchFacilities(FacilitySearchRequest request, Pageable pageable) {
+//        System.out.println("Upit za ES: " + request.toString());
+//
+//        Query query = BoolQuery.of(b -> {
+//
+//            // Zadrži postojeću detaljnu pretragu po poljima sa različitim tipovima
+//            if (request.getName() != null && !request.getName().isEmpty()) {
+//                switch (request.getNameSearchType()) {
+//                    case "phrase":
+//                        b.must(m -> m.matchPhrase(mp -> mp.field("name").query(request.getName())));
+//                        break;
+//                    case "prefix":
+//                        b.must(m -> m.prefix(p -> p.field("name").value(request.getName())));
+//                        break;
+//                    case "fuzzy":
+//                        b.must(m -> m.match(mb -> mb.field("name").fuzziness("AUTO").query(request.getName())));
+//                        break;
+//                    default:
+//                        b.must(m -> m.match(mb -> mb.field("name").query(request.getName())));
+//                        break;
+//                }
+//            }
+//
+//            // Isto za description
+//            if (request.getDescription() != null && !request.getDescription().isEmpty()) {
+//                switch (request.getDescriptionSearchType()) {
+//                    case "phrase":
+//                        b.must(m -> m.matchPhrase(mp -> mp.field("description").query(request.getDescription())));
+//                        break;
+//                    case "prefix":
+//                        b.must(m -> m.prefix(p -> p.field("description").value(request.getDescription())));
+//                        break;
+//                    case "fuzzy":
+//                        b.must(m -> m.match(mb -> mb.field("description").fuzziness("AUTO").query(request.getDescription())));
+//                        break;
+//                    default:
+//                        b.must(m -> m.match(mb -> mb.field("description").query(request.getDescription())));
+//                        break;
+//                }
+//            }
+//
+//            // Isto za pdfDescriptionText
+//            if (request.getPdfText() != null && !request.getPdfText().isEmpty()) {
+//                switch (request.getPdfTextSearchType()) {
+//                    case "phrase":
+//                        b.must(m -> m.matchPhrase(mp -> mp.field("pdfDescriptionText").query(request.getPdfText())));
+//                        break;
+//                    case "prefix":
+//                        b.must(m -> m.prefix(p -> p.field("pdfDescriptionText").value(request.getPdfText())));
+//                        break;
+//                    case "fuzzy":
+//                        b.must(m -> m.match(mb -> mb.field("pdfDescriptionText").fuzziness("AUTO").query(request.getPdfText())));
+//                        break;
+//                    default:
+//                        b.must(m -> m.match(mb -> mb.field("pdfDescriptionText").query(request.getPdfText())));
+//                        break;
+//                }
+//            }
+//
+//            // Dodatno: fulltext pretraga po listi ključnih reči (ako ih ima)
+//            if (request.getKeywords() != null && !request.getKeywords().isEmpty()) {
+//                b.must(mb -> mb.bool(bq -> {
+//                    for (String token : request.getKeywords()) {
+//                        bq.should(sb -> sb.match(m -> m.field("name").query(token).fuzziness("AUTO")));
+//                        bq.should(sb -> sb.match(m -> m.field("description").query(token).fuzziness("AUTO")));
+//                        bq.should(sb -> sb.match(m -> m.field("pdfDescriptionText").query(token).fuzziness("AUTO")));
+//                    }
+//                    return bq;
+//                }));
+//            }
+//
+//            // Ostali filteri kao do sada
+//            if (request.getCities() != null && !request.getCities().isEmpty()) {
+//                b.filter(f -> f.terms(t -> t.field("city.keyword").terms(terms ->
+//                    terms.value(request.getCities()
+//                        .stream()
+//                        .map(FieldValue::of)
+//                        .collect(Collectors.toList())
+//                    )))
+//                );
+//            }
+//
+//            if (request.getDisciplines() != null && !request.getDisciplines().isEmpty()) {
+//                b.filter(f -> f.terms(t -> t.field("disciplines.keyword").terms(terms ->
+//                    terms.value(request.getDisciplines()
+//                        .stream()
+//                        .map(FieldValue::of)
+//                        .collect(Collectors.toList())
+//                    )))
+//                );
+//            }
+//
+//            if (request.getMinReviewCount() != null || request.getMaxReviewCount() != null) {
+//                int min = request.getMinReviewCount() != null ? request.getMinReviewCount() : Integer.MIN_VALUE;
+//                int max = request.getMaxReviewCount() != null ? request.getMaxReviewCount() : Integer.MAX_VALUE;
+//                Double minD = (double) min;
+//                Double maxD = (double) max;
+//
+//                b.filter(f -> f.range(r -> r.number(n -> n.field("reviewCount").gte(minD).lte(maxD))));
+//            }
+//
+//            if (request.getMinAvgRating() != null || request.getMaxAvgRating() != null) {
+//                double min = request.getMinAvgRating() != null ? request.getMinAvgRating() : Double.MIN_VALUE;
+//                double max = request.getMaxAvgRating() != null ? request.getMaxAvgRating() : Double.MAX_VALUE;
+//
+//                b.filter(f -> f.range(r -> r.number(n -> n.field("avgEquipmentGrade").gte(min).lte(max))));
+//            }
+//
+//            return b;
+//        })._toQuery();
+//
+//        NativeQueryBuilder builder = new NativeQueryBuilder()
+//                .withQuery(query)
+//                .withPageable(pageable);
+//
+//        if (request.getSortField() != null && !request.getSortField().isEmpty()) {
+//            SortOrder order = "desc".equalsIgnoreCase(request.getSortOrder()) ? SortOrder.Desc : SortOrder.Asc;
+//            builder.withSort(s -> s.field(f -> f.field(request.getSortField()).order(order)));
+//        }
+//
+//        NativeQuery nativeQuery = builder.build();
+//
+//        SearchHits<FacilityDocument> searchHits = elasticsearchOperations.search(nativeQuery, FacilityDocument.class);
+//        return SearchHitSupport.searchPageFor(searchHits, pageable);
+//    }
 }
