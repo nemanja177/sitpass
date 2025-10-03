@@ -146,11 +146,10 @@ public class AdvancedSearchRequest {
 				+ ", minReviewCount=" + minReviewCount + ", maxReviewCount=" + maxReviewCount + ", avgGradeCategory="
 				+ avgGradeCategory + ", minAvgRating=" + minAvgRating + ", maxAvgRating=" + maxAvgRating
 				+ ", sortField=" + sortField + ", sortOrder=" + sortOrder + ", textSearchOperator=" + textSearchOperator
-				+ "]";
+				+ ", highlightedName=" + highlightedName + ", highlightedDescription=" + highlightedDescription + "]";
 	}
 	
 	
 	
-
     
 }

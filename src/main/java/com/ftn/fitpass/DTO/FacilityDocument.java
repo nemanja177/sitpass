@@ -3,6 +3,7 @@ package com.ftn.fitpass.DTO;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -50,6 +51,12 @@ public class FacilityDocument {
 
     @Field(type = FieldType.Double)
     private double avgSpaceGrade;
+    
+    @Transient
+    private List<String> highlightedName;
+
+    @Transient
+    private List<String> highlightedDescription;
 
 	public String getId() {
 		return id;
@@ -153,6 +160,22 @@ public class FacilityDocument {
 
 	public void setAvgSpaceGrade(double avgSpaceGrade) {
 		this.avgSpaceGrade = avgSpaceGrade;
+	}
+
+	public List<String> getHighlightedName() {
+		return highlightedName;
+	}
+
+	public void setHighlightedName(List<String> highlightedName) {
+		this.highlightedName = highlightedName;
+	}
+
+	public List<String> getHighlightedDescription() {
+		return highlightedDescription;
+	}
+
+	public void setHighlightedDescription(List<String> highlightedDescription) {
+		this.highlightedDescription = highlightedDescription;
 	}
     
     

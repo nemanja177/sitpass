@@ -8,10 +8,12 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.json.JsonData;
 
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
+
 import org.springframework.data.elasticsearch.client.elc.NativeQueryBuilder;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.SearchPage;
+import org.springframework.data.elasticsearch.core.SearchHitsImpl;
 import org.springframework.data.elasticsearch.core.SearchHitSupport;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -70,7 +72,7 @@ public class FacilitySearchServiceImpl implements FacilitySearchService {
             if (request.getName() != null && !request.getName().isEmpty()) {
                 Query nameQuery = switch (request.getNameSearchType()) {
                     case "phrase" -> Query.of(m -> m.matchPhrase(mp -> mp.field("name").query(request.getName())));
-                    case "prefix" -> Query.of(m -> m.prefix(p -> p.field("name").value(request.getName())));
+                    case "prefix" -> Query.of(m -> m.prefix(p -> p.field("name.keyword").value(request.getName())));
                     case "fuzzy" -> Query.of(m -> m.match(mb -> mb.field("name").fuzziness("AUTO").query(request.getName())));
                     default -> Query.of(m -> m.match(mb -> mb.field("name").query(request.getName())));
                 };
@@ -215,10 +217,23 @@ public class FacilitySearchServiceImpl implements FacilitySearchService {
 //            builder.withSort(s -> s.field(f -> f.field(request.getSortField()).order(order)));
 //        }
 
+        
         NativeQuery nativeQuery = builder.build();
         SearchHits<FacilityDocument> searchHits = elasticsearchOperations.search(nativeQuery, FacilityDocument.class);
+        
+        List<FacilityDocument> documentsWithHighlights = searchHits.stream()
+                .map(hit -> {
+                    FacilityDocument doc = hit.getContent();
+                    
+                    doc.setHighlightedName(hit.getHighlightField("name"));
+                    doc.setHighlightedDescription(hit.getHighlightField("description"));
+                    
+                    return doc;
+                })
+                .collect(Collectors.toList());
+        
 
-        return SearchHitSupport.searchPageFor(searchHits, pageable);
+         return SearchHitSupport.searchPageFor(searchHits, pageable);
     }
     
 //    @Override
