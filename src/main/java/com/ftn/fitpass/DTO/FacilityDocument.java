@@ -15,7 +15,7 @@ public class FacilityDocument {
     @Id
     private String id;
 
-    @Field(type = FieldType.Text, analyzer = "serbian_analyzer", searchAnalyzer = "serbian_analyzer")
+    @Field(type = FieldType.Text, analyzer = "serbian_analyzer", searchAnalyzer = "serbian_analyzer" )
     private String name;
 
     @Field(type = FieldType.Text, analyzer = "serbian_analyzer", searchAnalyzer = "serbian_analyzer")

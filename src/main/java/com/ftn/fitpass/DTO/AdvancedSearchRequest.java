@@ -13,11 +13,47 @@ public class AdvancedSearchRequest {
     private List<String> disciplines; 
     private Integer minReviewCount;   
     private Integer maxReviewCount;   
+    
+    private String avgGradeCategory;
     private Double minAvgRating;      
-    private Double maxAvgRating;      
+    private Double maxAvgRating;
 
     private String sortField;         
     private String sortOrder;
+    
+    private String textSearchOperator;
+    
+    private List<String> highlightedName;
+    private List<String> highlightedDescription;
+    
+    
+    
+	public List<String> getHighlightedName() {
+		return highlightedName;
+	}
+	public void setHighlightedName(List<String> highlightedName) {
+		this.highlightedName = highlightedName;
+	}
+	public List<String> getHighlightedDescription() {
+		return highlightedDescription;
+	}
+	public void setHighlightedDescription(List<String> highlightedDescription) {
+		this.highlightedDescription = highlightedDescription;
+	}
+	
+	
+	public String getTextSearchOperator() {
+		return textSearchOperator;
+	}
+	public void setTextSearchOperator(String textSearchOperator) {
+		this.textSearchOperator = textSearchOperator;
+	}
+	public String getAvgGradeCategory() {
+		return avgGradeCategory;
+	}
+	public void setAvgGradeCategory(String avgGradeCategory) {
+		this.avgGradeCategory = avgGradeCategory;
+	}
 	public String getName() {
 		return name;
 	}
@@ -107,10 +143,14 @@ public class AdvancedSearchRequest {
 		return "AdvancedSearchRequest [name=" + name + ", nameSearchType=" + nameSearchType + ", description="
 				+ description + ", descriptionSearchType=" + descriptionSearchType + ", pdfText=" + pdfText
 				+ ", pdfTextSearchType=" + pdfTextSearchType + ", cities=" + cities + ", disciplines=" + disciplines
-				+ ", minReviewCount=" + minReviewCount + ", maxReviewCount=" + maxReviewCount + ", minAvgRating="
-				+ minAvgRating + ", maxAvgRating=" + maxAvgRating + ", sortField=" + sortField + ", sortOrder="
-				+ sortOrder + "]";
+				+ ", minReviewCount=" + minReviewCount + ", maxReviewCount=" + maxReviewCount + ", avgGradeCategory="
+				+ avgGradeCategory + ", minAvgRating=" + minAvgRating + ", maxAvgRating=" + maxAvgRating
+				+ ", sortField=" + sortField + ", sortOrder=" + sortOrder + ", textSearchOperator=" + textSearchOperator
+				+ "]";
 	}
+	
+	
+	
 
     
 }
