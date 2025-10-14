@@ -2,6 +2,8 @@ package com.ftn.fitpass.services.impl;
 
 import io.minio.MinioClient;
 import io.minio.GetObjectArgs;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ftn.fitpass.services.MinioService;

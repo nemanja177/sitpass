@@ -40,14 +40,14 @@ public class FacilityElasticController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping
-    public ResponseEntity<Facility> createFacility(@RequestBody Facility facility) {
-        Facility savedFacility = facilityService.save(facility);
-
-        facilityElasticService.indexFacility(savedFacility.getId());
-
-        return ResponseEntity.ok(savedFacility);
-    }
+//    @PostMapping
+//    public ResponseEntity<Facility> createFacility(@RequestBody Facility facility) {
+//        Facility savedFacility = facilityService.save(facility);
+//
+//        facilityElasticService.indexFacility(savedFacility.getId());
+//
+//        return ResponseEntity.ok(savedFacility);
+//    }
 
     @PostMapping("/{id}/index")
     public ResponseEntity<?> reindexFacility(@PathVariable Long id) {
@@ -61,10 +61,10 @@ public class FacilityElasticController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
-    public ResponseEntity<?> getAllFacilities() {
-        return ResponseEntity.ok(facilityService.findAll());
-    }
+//    @GetMapping
+//    public ResponseEntity<?> getAllFacilities() {
+//        return ResponseEntity.ok(facilityService.findAll());
+//    }
     
     @DeleteMapping("/deindex")
     public ResponseEntity<?> deindex() {
@@ -72,10 +72,10 @@ public class FacilityElasticController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getFacilityById(@PathVariable Long id) {
-        return facilityService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<?> getFacilityById(@PathVariable Long id) {
+//        return facilityService.findById(id)
+//                .map(ResponseEntity::ok)
+//                .orElse(ResponseEntity.notFound().build());
+//    }
 }
