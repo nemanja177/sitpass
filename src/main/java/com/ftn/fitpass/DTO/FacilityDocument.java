@@ -36,6 +36,9 @@ public class FacilityDocument {
 
     @Field(type = FieldType.Keyword)
     private List<String> imageFilenames;
+    
+    @Field(type = FieldType.Keyword)
+    private String pdfFileName;
 
     @Field(type = FieldType.Integer)
     private int reviewCount;
@@ -177,6 +180,15 @@ public class FacilityDocument {
 	public void setHighlightedDescription(List<String> highlightedDescription) {
 		this.highlightedDescription = highlightedDescription;
 	}
+
+	public String getPdfFileName() {
+		return pdfFileName;
+	}
+
+	public void setPdfFileName(String pdfFileName) {
+		this.pdfFileName = pdfFileName;
+	}
+	
     
     
 }

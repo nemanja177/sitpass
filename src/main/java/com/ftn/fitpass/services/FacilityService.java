@@ -12,7 +12,7 @@ public interface FacilityService {
 
 //	List<Facility> findAll();
 //	
-//	Optional<Facility> findById(Long id);
+	Optional<Facility> findById(Long id);
 //	
 //	Facility save(Facility facility);
 //	

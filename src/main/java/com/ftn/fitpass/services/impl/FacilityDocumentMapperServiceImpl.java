@@ -40,7 +40,10 @@ public class FacilityDocumentMapperServiceImpl implements FacilityDocumentMapper
                 : facility.getImages().stream().map(Image::getServerFilename).collect(Collectors.toList())
         );
         doc.setPdfDescriptionText(facility.getPdfDescription() == null ? "" : loadPdfText(facility.getPdfDescription()));
-        doc.setPdfDescriptionText("");
+        doc.setPdfFileName(facility.getPdfDescription().getServerFilename());
+//        doc.setPdfDescriptionText("");
+        System.out.println("FAJL: " + facility.getPdfDescription().getServerFilename());
+        System.out.println("TEXT IZ FAJLA:" + loadPdfText(facility.getPdfDescription()));
         if (reviews == null || reviews.isEmpty()) {
             doc.setReviewCount(0);
             doc.setAvgEquipmentGrade(0);

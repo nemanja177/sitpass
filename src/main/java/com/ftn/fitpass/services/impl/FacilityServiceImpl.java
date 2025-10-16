@@ -29,10 +29,10 @@ public class FacilityServiceImpl implements FacilityService {
 //		return facilityRepository.findAll();
 //	}
 //
-//	@Override
-//	public Optional<Facility> findById(Long id) {
-//		return facilityRepository.findFacilityById(id);
-//	}
+	@Override
+	public Optional<Facility> findById(Long id) {
+		return facilityRepository.findFacilityById(id);
+	}
 //
 //	@Override
 //	public Facility save(Facility facility) {

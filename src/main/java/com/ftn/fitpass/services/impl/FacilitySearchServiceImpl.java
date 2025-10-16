@@ -65,6 +65,7 @@ public class FacilitySearchServiceImpl implements FacilitySearchService {
     
     @Override
     public SearchPage<FacilityDocument> advancedSearch(AdvancedSearchRequest request, Pageable pageable) {
+    	System.out.println("ADVANCED SEARCH: " + request.toString());
         Query query = BoolQuery.of(b -> {
 
             List<Query> textQueries = new ArrayList<>();
@@ -105,12 +106,10 @@ public class FacilitySearchServiceImpl implements FacilitySearchService {
                 Double minD = (double) min;
                 Double maxD = (double) max;
                 
-                // Kreiranje range upita
                 Query reviewCountQuery = Query.of(f -> f.range(r -> r.number(n -> n.field("reviewCount").gte(minD).lte(maxD))));
                 textQueries.add(reviewCountQuery); // DODATO U LISTU
             }
 
-            // 5. Prikupljanje upita za AVG RATING (range query)
             if (request.getAvgGradeCategory() != null) {
                 String field = switch (request.getAvgGradeCategory()) {
                     case "equipment" -> "avgEquipmentGrade";
@@ -131,14 +130,12 @@ public class FacilitySearchServiceImpl implements FacilitySearchService {
             
             if (!textQueries.isEmpty()) {
                 
-                // Podrazumevani operator je AND
                 String operator = request.getTextSearchOperator() != null ? request.getTextSearchOperator().toUpperCase() : "AND";
                 System.out.println("REQUEST CEO: " + request.toString());
                 System.out.println("OPERATOR CEO: " + operator);
                 if ("OR".equals(operator)) {
                     Query orQuery = BoolQuery.of(innerB -> {
                         textQueries.forEach(innerB::should);
-                        // Dodaj min_should_match ako zelis, npr. innerB.minimumShouldMatch("1")
                         return innerB; 
                     })._toQuery();
                     
